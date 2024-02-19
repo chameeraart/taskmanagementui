@@ -1,0 +1,121 @@
+<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Task Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/task" routerLinkActive="active">Task</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/tasklist" routerLinkActive="active">TaskList</a>
+        </li>          
+        <!-- Add more navigation links as needed -->
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col">
+      <!-- Task Form -->
+      <form [formGroup]="task" class="card shadow p-3 mb-5 bg-white rounded" (ngSubmit)="submitForm()">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-4">Add Task</h5>
+          <!-- Title Input -->
+          <div class="form-group">
+            <label for="Title">Title:</label>
+            <input type="text" class="form-control" id="Title" formControlName="Title">
+          </div>
+          <!-- Description Textarea -->
+          <div class="form-group">
+            <label for="Description">Description:</label>
+            <textarea class="form-control" id="Description" formControlName="Description"></textarea>
+          </div>
+          <!-- Due Date Input -->
+          <div class="form-group">
+            <label for="DueDate">Due Date:</label>
+            <input type="date" class="form-control" id="DueDate" formControlName="DueDate">
+          </div>
+
+          <div class="row"></div>
+
+          <div class="row justify-content-center mt-8">
+            <div class="col-md-6 text-center">
+              <button type="submit" style="width: 80px; height: 30px; margin-right: 10px;" class="btn btn-primary btn-sm">Submit</button>
+              <button type="button" style="width: 80px; height: 30px; margin-right: 10px;" class="btn btn-outline-primary btn-sm" (click)="clear()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Task Grid -->
+      <div class="card mt-4 shadow p-3 mb-5 bg-white rounded">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-4">Task List</h5>
+          <!-- Search Box -->
+          <input type="text" class="form-control mb-3" placeholder="Search tasks" [(ngModel)]="searchTerm">
+
+          <!-- Grid Table -->
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th hidden="hidden">Id</th>
+                  <th (click)="sortBy = 'title'; toggleSortOrder()">
+                    Title
+                    <span *ngIf="sortBy === 'title'" class="sorting-icon">
+                      <i class="fas fa-sort"></i>
+                    </span>
+                  </th>
+                  <th (click)="sortBy = 'description'; toggleSortOrder()">
+                    Description
+                    <span *ngIf="sortBy === 'description'" class="sorting-icon">
+                      <i class="fas fa-sort"></i>
+                    </span>
+                  </th>
+                  <th (click)="sortBy = 'dueDate'; toggleSortOrder()">
+                    Due Date
+                    <span *ngIf="sortBy === 'dueDate'" class="sorting-icon">
+                      <i class="fas fa-sort"></i>
+                    </span>
+                  </th>
+                </tr>
+                
+              </thead>
+              <tbody>
+                <!-- Loop through filtered tasks and display in table rows -->
+                <tr *ngFor="let taskItem of filterTasks()">
+                  <td hidden="hidden">{{ taskItem.id }}</td>
+                  <td>{{ taskItem.title }}</td>
+                  <td>{{ taskItem.description }}</td>
+                  <td>{{ taskItem.dueDate | date:'yyyy/MM/dd' }}</td>
+                  <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <!-- Edit Button -->
+                      <button type="button" class="btn btn-primary" style="width: 80px; height: 30px; margin-right: 5px;" (click)="onEdit(taskItem.id)">Edit</button>
+                      <!-- Delete Button -->
+                      <button type="button" class="btn btn-danger" style="width: 80px; height: 30px; margin-right: 5px;" (click)="onDelete(taskItem.id)">Delete</button>
+                      <!-- Complete Button -->
+                      <button type="button" class="btn btn-success" style="width: 80px; height: 30px; margin-right: 5px;" (click)="onComplete(taskItem.id)">Complete</button>
+                    </div>
+                  </td> 
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Pagination -->
+          <div class="pagination">
+            <button class="btn btn-sm btn-primary" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">Previous</button>
+            <span>{{ currentPage }} / {{ getTotalPages() }}</span>
+            <button class="btn btn-sm btn-primary" [disabled]="currentPage === getTotalPages()" (click)="onPageChange(currentPage + 1)">Next</button>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
